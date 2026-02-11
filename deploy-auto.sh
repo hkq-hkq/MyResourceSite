@@ -207,6 +207,8 @@ initial_commit() {
   # 添加所有文件
   print_info "添加文件到暂存区..."
   git add .
+  print_success "文件已添加"
+  sleep 2
 
   # 生成提交信息
   COMMIT_MESSAGE=$(generate_commit_message)
@@ -230,10 +232,15 @@ push_to_remote() {
     git branch --set-upstream-to=origin/main main
   fi
 
-  # 推送
-  print_info "推送到 GitHub..."
+    # 推送
+  print_step "推送到 GitHub..."
+  print_info "正在推送，请稍候..."
+  sleep 2
   if git push -u origin main 2>&1; then
     print_success "代码已成功推送到 GitHub！"
+    print_success "✅ GitHub 已触发自动部署"
+    print_info "等待宝塔 WebHook 响应..."
+    sleep 5
   else
     print_error "推送失败，请检查网络连接和仓库权限"
     return 1
@@ -246,7 +253,9 @@ push_to_remote() {
 trigger_webhook() {
   print_step "触发宝塔自动部署"
 
-  print_info "发送 WebHook 请求..."
+  print_info "正在发送 WebHook 请求..."
+  sleep 2
+  print_info "等待宝塔接收请求..."
 
   response=$(curl -X POST "$WEBHOOK_URL" \
     -H "Content-Type: application/json" \
@@ -256,11 +265,16 @@ trigger_webhook() {
     2>/dev/null)
 
   if [ "$response" = "200" ] || [ "$response" = "201" ]; then
-    print_success "WebHook 触发成功！宝塔将开始部署..."
-  else
+    print_success "WebHook 请求发送成功！"
+    print_success "✅ 宝塔已接收部署请求"
+    print_info "等待宝塔执行部署（拉取代码、构建、同步）..."
+    sleep 10
+    print_success "🎉 部署应该已完成！"
+    print_info "请访问网站验证: $SITE_URL"
+    else
     print_warning "WebHook 响应码: $response"
     print_info "请检查宝塔面板是否已正确配置 WebHook"
-  fi
+    fi
 }
 
 # ====================================
