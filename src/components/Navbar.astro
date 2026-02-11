@@ -1,0 +1,196 @@
+---
+// 导航菜单配置
+const navigation = [
+  { name: '首页', href: '/' },
+  { name: '设计资源', href: '/category/design' },
+  { name: '开发工具', href: '/category/dev-tools' },
+  { name: '视频教程', href: '/category/tutorials' },
+  { name: '发布资源', href: '/admin/publish', highlight: true },
+];
+---
+
+<header id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-500">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-20">
+      <!-- Logo -->
+      <a href="/" class="flex items-center gap-3 group">
+        <div class="relative">
+          <div class="w-12 h-12 bg-gradient-to-br from-purple-500 via-pink-500 to-cyan-500 rounded-2xl flex items-center justify-center glow transition-all duration-500 group-hover:scale-110 group-hover:rotate-12">
+            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+          </div>
+        </div>
+        <div class="flex flex-col">
+          <span class="text-xl font-bold gradient-text leading-tight tracking-wide">资源库</span>
+          <span class="text-xs text-slate-400 tracking-wider">RESOURCE HUB</span>
+        </div>
+      </a>
+
+      <!-- Desktop Navigation -->
+      <nav class="hidden md:flex items-center gap-3">
+        {navigation.map((item) => (
+          <a
+            href={item.href}
+            class:list={[
+              "nav-link relative px-6 py-2.5 rounded-2xl font-medium transition-all duration-300 text-sm",
+              item.highlight && "btn-gradient"
+            ]}
+            aria-label={item.name}
+          >
+            {item.highlight ? (
+              <span class="relative z-10 flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                </svg>
+                {item.name}
+              </span>
+            ) : (
+              item.name
+            )}
+          </a>
+        ))}
+      </nav>
+
+      <!-- Search & Mobile Menu -->
+      <div class="flex items-center gap-3">
+        <button
+          id="search-toggle"
+          class="p-3 rounded-2xl transition-all duration-300 hover:scale-105 group"
+          style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1);"
+          aria-label="搜索"
+        >
+          <svg class="w-5 h-5 text-purple-400 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+        </button>
+        <button
+          id="mobile-menu-btn"
+          class="md:hidden p-3 rounded-2xl transition-all duration-300 hover:scale-105"
+          style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1);"
+          aria-label="菜单"
+        >
+          <svg class="w-6 h-6 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Navigation -->
+    <nav id="mobile-menu" class="hidden md:hidden pb-6">
+      <div class="flex flex-col gap-2 mt-4">
+        {navigation.map((item, index) => (
+          <a
+            href={item.href}
+            class="nav-link-mobile flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300"
+            style={`animation: slideUp 0.3s ease-out ${index * 50}ms both; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1);`}
+            aria-label={item.name}
+          >
+            {item.highlight && (
+              <svg class="w-5 h-5 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+              </svg>
+            )}
+            <span class="font-medium">{item.name}</span>
+          </a>
+        ))}
+      </div>
+    </nav>
+  </div>
+
+  <!-- Search Overlay -->
+  <div id="search-overlay" class="absolute inset-x-0 top-0 p-4 opacity-0 invisible transition-all duration-300">
+    <div class="max-w-2xl mx-auto">
+      <input
+        type="search"
+        id="search-input"
+        placeholder="搜索资源..."
+        class="input-modern w-full pl-14"
+      />
+      <svg class="absolute left-8 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+      </svg>
+    </div>
+  </div>
+</header>
+
+<style>
+  #navbar.scrolled {
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(168, 85, 247, 0.2);
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+
+<script>
+  // 移动端菜单切换
+  const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+  const mobileMenu = document.getElementById('mobile-menu');
+
+  if (mobileMenuBtn && mobileMenu) {
+    mobileMenuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+  }
+
+  // 搜索功能
+  const searchToggle = document.getElementById('search-toggle');
+  const searchOverlay = document.getElementById('search-overlay');
+  const searchInput = document.getElementById('search-input');
+  let searchOpen = false;
+
+  function toggleSearch() {
+    searchOpen = !searchOpen;
+    if (searchOpen) {
+      searchOverlay?.classList.remove('opacity-0', 'invisible');
+      searchOverlay?.classList.add('opacity-100', 'visible');
+      searchInput?.focus();
+    } else {
+      searchOverlay?.classList.add('opacity-0', 'invisible');
+      searchOverlay?.classList.remove('opacity-100', 'visible');
+    }
+  }
+
+  function performSearch() {
+    const query = searchInput?.value.trim();
+    if (query) {
+      window.location.href = `/search?q=${encodeURIComponent(query)}`;
+    }
+  }
+
+  searchToggle?.addEventListener('click', toggleSearch);
+
+  // ESC关闭搜索
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && searchOpen) {
+      toggleSearch();
+    }
+    // Enter键执行搜索
+    if (e.key === 'Enter' && searchOpen && searchInput) {
+      performSearch();
+    }
+  });
+
+  // 导航栏滚动效果
+  const navbar = document.getElementById('navbar');
+
+  window.addEventListener('scroll', () => {
+    if (window.pageYOffset > 20) {
+      navbar?.classList.add('scrolled');
+    } else {
+      navbar?.classList.remove('scrolled');
+    }
+  });
+</script>

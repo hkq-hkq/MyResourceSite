@@ -1,0 +1,99 @@
+---
+const currentYear = new Date().getFullYear();
+---
+
+<footer class="relative border-t border-white/10 mt-20">
+  <!-- 背景装饰 -->
+  <div class="absolute inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute bottom-0 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-0 right-1/4 w-80 h-80 bg-pink-500/10 rounded-full blur-3xl"></div>
+  </div>
+
+  <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
+      <!-- 关于 -->
+      <div>
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center glow-sm">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+          </div>
+          <span class="text-xl font-bold gradient-text">资源库</span>
+        </div>
+        <p class="text-slate-400 text-sm leading-relaxed mb-4">
+          专注于分享优质设计资源、开发工具、视频教程等内容，助力创作者和开发者提升效率。
+        </p>
+        <div class="flex gap-3">
+          <a href="#" class="w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 hover:bg-purple-500/20">
+            <svg class="w-5 h-5 text-slate-400" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+            </svg>
+          </a>
+          <a href="#" class="w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 hover:bg-purple-500/20">
+            <svg class="w-5 h-5 text-slate-400" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-6.416c0-.953-.392-1.857-1.082-2.492-.517-.48-1.156-1.191-1.944-2.433-.738-1.176-1.734-2.653-2.386-4.33-.531-1.336-.802-2.738-.802-4.182 0-3.022 2.193-5.531 4.907-5.531 1.361 0 2.535.464 3.423 1.239.89.756 1.431 1.694 1.431 2.695 0 1.692-.895 2.846-2.248 3.54-1.462.783-3.625 1.483-5.638 1.483-4.144 0-7.506-3.373-7.506-7.525 0-1.33.345-2.578.951-3.544.848-.984.24-2.032.723-2.92 1.417-.452.379-.75.84-.75-1.314-.75-.485 0-.896.351-1.175.75-.287.417-.23.974.133-1.75.75-1.75.0-1.295.895-2.386 2.228-3.229 1.462-.828 3.636-1.484 5.714-1.484 4.192 0 7.576 3.388 7.576 7.564 0 1.345-.347 2.603-.949 3.57-.612 1.067-1.484 1.91-2.594 2.511-.492.267-1.04.408-1.623.408-.475 0-.883-.351-1.165-.75-.29-.423-.218-.998.133-1.748.75-.75.0-1.29.895-2.388 2.249-3.228 1.484-.854 3.673-1.522 5.792-1.522z"/>
+            </svg>
+          </a>
+          <a href="#" class="w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 hover:bg-purple-500/20">
+            <svg class="w-5 h-5 text-slate-400" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-6.416c0-.953-.392-1.857-1.082-2.492-.517-.48-1.156-1.191-1.944-2.433-.738-1.176-1.734-2.653-2.386-4.33-.531-1.336-.802-2.738-.802-4.182 0-3.022 2.193-5.531 4.907-5.531 1.361 0 2.535.464 3.423 1.239.89.756 1.431 1.694 1.431 2.695 0 1.692-.895 2.846-2.248 3.54-1.462.783-3.625 1.483-5.638 1.483-4.144 0-7.506-3.373-7.506-7.525 0-1.33.345-2.578.951-3.544.848-.984.24-2.032.723-2.92 1.417-.452.379-.75.84-.75-1.314-.75-.485 0-.896.351-1.175.75-.287.417-.23.974.133-1.75.75-1.75.0-1.295.895-2.386 2.228-3.229 1.462-.828 3.636-1.484 5.714-1.484 4.192 0 7.576 3.388 7.576 7.564 0 1.345-.347 2.603-.949 3.57-.612 1.067-1.484 1.91-2.594 2.511-.492.267-1.04.408-1.623.408-.475 0-.883-.351-1.165-.75-.29-.423-.218-.998.133-1.748.75-.75.0-1.29.895-2.388 2.249-3.228 1.484-.854 3.673-1.522 5.792-1.522z"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- 快速链接 -->
+      <div>
+        <h4 class="font-bold mb-6 text-white">快速链接</h4>
+        <ul class="space-y-3">
+          <li><a href="/" class="text-slate-400 hover:text-white transition-colors text-sm">首页</a></li>
+          <li><a href="/category/design" class="text-slate-400 hover:text-white transition-colors text-sm">设计资源</a></li>
+          <li><a href="/category/dev-tools" class="text-slate-400 hover:text-white transition-colors text-sm">开发工具</a></li>
+          <li><a href="/admin/publish" class="text-slate-400 hover:text-white transition-colors text-sm">发布资源</a></li>
+        </ul>
+      </div>
+
+      <!-- 资源分类 -->
+      <div>
+        <h4 class="font-bold mb-6 text-white">资源分类</h4>
+        <ul class="space-y-3">
+          <li><a href="/category/design" class="text-slate-400 hover:text-white transition-colors text-sm">设计资源</a></li>
+          <li><a href="/category/dev-tools" class="text-slate-400 hover:text-white transition-colors text-sm">开发工具</a></li>
+          <li><a href="/category/tutorials" class="text-slate-400 hover:text-white transition-colors text-sm">视频教程</a></li>
+          <li><a href="/category/ebooks" class="text-slate-400 hover:text-white transition-colors text-sm">电子书</a></li>
+        </ul>
+      </div>
+
+      <!-- 订阅 -->
+      <div>
+        <h4 class="font-bold mb-6 text-white">订阅更新</h4>
+        <p class="text-slate-400 text-sm mb-4">
+          订阅我们的更新通知，第一时间获取最新资源。
+        </p>
+        <div class="flex gap-2">
+          <input
+            type="email"
+            placeholder="输入邮箱..."
+            class="input-modern flex-1 px-4 py-3 text-sm"
+          />
+          <button class="btn-gradient px-6 py-3 text-sm font-bold rounded-xl">
+            订阅
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 底部版权 -->
+    <div class="pt-8 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-4">
+      <p class="text-slate-400 text-sm">
+        © {currentYear} 资源库. All rights reserved.
+      </p>
+      <div class="flex gap-6 text-sm">
+        <a href="#" class="text-slate-400 hover:text-white transition-colors">隐私政策</a>
+        <a href="#" class="text-slate-400 hover:text-white transition-colors">使用条款</a>
+        <a href="#" class="text-slate-400 hover:text-white transition-colors">联系我们</a>
+      </div>
+    </div>
+  </div>
+</footer>

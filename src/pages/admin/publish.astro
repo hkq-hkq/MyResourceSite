@@ -1,0 +1,316 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Navbar from '../../components/Navbar.astro';
+import Footer from '../../components/Footer.astro';
+import { categories } from '../../data/resources';
+---
+
+<Layout title="发布资源 - 后台管理`}>
+  <Navbar />
+
+  <main class="min-h-screen">
+    <!-- 页面头部 -->
+    <section class="relative py-12 overflow-hidden">
+      <div class="absolute inset-0">
+        <div class="absolute inset-0 opacity-20 bg-gradient-to-r from-purple-600/30 via-pink-600/30 to-cyan-600/30"></div>
+        <div class="absolute inset-0 backdrop-blur-3xl"></div>
+      </div>
+
+      <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center gap-4">
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center glow-sm">
+            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+          </div>
+          <div>
+            <h1 class="text-3xl font-bold gradient-text">发布新资源</h1>
+            <p class="text-slate-400 mt-1">填写资源信息并发布到平台</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 表单区域 -->
+    <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 -mt-6 relative z-20">
+      <form id="resource-form" class="glass-card p-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- 左侧：基本信息 -->
+          <div class="space-y-6">
+            <!-- 资源标题 -->
+            <div>
+              <label class="block text-sm font-semibold text-slate-300 mb-2">
+                资源标题 <span class="text-red-400">*</span>
+              </label>
+              <input
+                type="text"
+                name="title"
+                required
+                placeholder="请输入资源标题"
+                class="input-modern w-full"
+              />
+            </div>
+
+            <!-- 资源分类 -->
+            <div>
+              <label class="block text-sm font-semibold text-slate-300 mb-2">
+                资源分类 <span class="text-red-400">*</span>
+              </label>
+              <select name="category" required class="input-modern w-full cursor-pointer">
+                <option value="">请选择分类</option>
+                {categories.map(cat => (
+                  <option value={cat.name}>{cat.name}</option>
+                ))}
+              </select>
+            </div>
+
+            <!-- 网盘平台 -->
+            <div>
+              <label class="block text-sm font-semibold text-slate-300 mb-2">
+                网盘平台 <span class="text-red-400">*</span>
+              </label>
+              <select name="platform" required class="input-modern w-full cursor-pointer">
+                <option value="">请选择网盘平台</option>
+                <option value="百度网盘">百度网盘</option>
+                <option value="阿里云盘">阿里云盘</option>
+                <option value="夸克网盘">夸克网盘</option>
+                <option value="迅雷网盘">迅雷网盘</option>
+                <option value="123网盘">123网盘</option>
+                <option value="蓝奏云">蓝奏云</option>
+                <option value="GitHub">GitHub</option>
+                <option value="其他">其他</option>
+              </select>
+            </div>
+
+            <!-- 下载链接 -->
+            <div>
+              <label class="block text-sm font-semibold text-slate-300 mb-2">
+                下载链接 <span class="text-red-400">*</span>
+              </label>
+              <input
+                type="url"
+                name="fileUrl"
+                required
+                placeholder="https://pan.baidu.com/s/xxx"
+                class="input-modern w-full"
+              />
+              <p class="text-xs text-slate-500 mt-2">请输入完整的网盘分享链接</p>
+            </div>
+
+            <!-- 提取码 -->
+            <div>
+              <label class="block text-sm font-semibold text-slate-300 mb-2">
+                提取码（可选）
+              </label>
+              <input
+                type="text"
+                name="extractCode"
+                placeholder="如有提取码请填写"
+                class="input-modern w-full"
+              />
+            </div>
+
+            <!-- 文件大小 -->
+            <div>
+              <label class="block text-sm font-semibold text-slate-300 mb-2">
+                文件大小 <span class="text-red-400">*</span>
+              </label>
+              <div class="flex gap-3">
+                <input
+                  type="number"
+                  name="fileSize"
+                  required
+                  placeholder="100"
+                  class="input-modern flex-1"
+                />
+                <select name="sizeUnit" class="input-modern w-24 cursor-pointer">
+                  <option value="MB">MB</option>
+                  <option value="GB">GB</option>
+                  <option value="TB">TB</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- 右侧：详细信息和标签 -->
+          <div class="space-y-6">
+            <!-- 资源描述 -->
+            <div>
+              <label class="block text-sm font-semibold text-slate-300 mb-2">
+                资源描述 <span class="text-red-400">*</span>
+              </label>
+              <textarea
+                name="description"
+                required
+                rows="6"
+                placeholder="请详细描述资源内容、使用方法等..."
+                class="input-modern w-full resize-none"
+              ></textarea>
+              <p class="text-xs text-slate-500 mt-2">至少10个字符，建议50-200字</p>
+            </div>
+
+            <!-- 资源标签 -->
+            <div>
+              <label class="block text-sm font-semibold text-slate-300 mb-2">
+                资源标签 <span class="text-red-400">*</span>
+              </label>
+              <input
+                type="text"
+                name="tags"
+                required
+                placeholder="用逗号或空格分隔，如：UI设计,Figma,组件"
+                class="input-modern w-full"
+              />
+              <p class="text-xs text-slate-500 mt-2">建议添加3-5个相关标签，提高搜索曝光</p>
+            </div>
+
+            <!-- 封面图片 -->
+            <div>
+              <label class="block text-sm font-semibold text-slate-300 mb-2">
+                封面图片（可选）
+              </label>
+              <div class="border-2 border-dashed border-slate-700 rounded-2xl p-8 text-center hover:border-purple-500/50 transition-colors cursor-pointer">
+                <input type="file" name="coverImage" accept="image/*" class="hidden" id="cover-upload" />
+                <label for="cover-upload" class="cursor-pointer">
+                  <svg class="w-12 h-12 mx-auto mb-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                  </svg>
+                  <p class="text-slate-400 mb-2">点击或拖拽上传封面图</p>
+                  <p class="text-xs text-slate-500">支持 JPG、PNG、GIF 格式，建议尺寸 800x600</p>
+                </label>
+              </div>
+            </div>
+
+            <!-- 发布者信息 -->
+            <div>
+              <label class="block text-sm font-semibold text-slate-300 mb-2">
+                发布者名称 <span class="text-red-400">*</span>
+              </label>
+              <input
+                type="text"
+                name="author"
+                required
+                placeholder="请输入您的名称"
+                class="input-modern w-full"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- 选项 -->
+        <div class="mt-8 p-6 rounded-2xl" style="background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.2);">
+          <div class="flex items-center gap-3">
+            <input
+              type="checkbox"
+              name="featured"
+              id="featured"
+              class="w-5 h-5 rounded text-purple-500 focus:ring-purple-500"
+            />
+            <label for="featured" class="flex-1 cursor-pointer">
+              <span class="font-semibold text-white">设为精选推荐</span>
+              <p class="text-sm text-slate-400 mt-1">精选资源将在首页优先展示</p>
+            </label>
+          </div>
+        </div>
+
+        <!-- 提交按钮 -->
+        <div class="mt-8 flex flex-col sm:flex-row gap-4">
+          <button
+            type="submit"
+            class="flex-1 btn-gradient py-4 text-lg font-bold rounded-2xl flex items-center justify-center gap-2"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+            立即发布
+          </button>
+          <button
+            type="button"
+            id="save-draft"
+            class="px-8 py-4 text-lg font-bold rounded-2xl transition-all duration-300 flex items-center justify-center gap-2"
+            style="background: rgba(168, 85, 247, 0.15); backdrop-filter: blur(10px); border: 1px solid rgba(168, 85, 247, 0.3);"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-4 0l4-4m0 0l-4 4m4 4V9a2 2 0 00-2-2H6a2 2 0 00-2 2v11"/>
+            </svg>
+            保存草稿
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- 发布提示 -->
+    <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+      <div class="glass-card p-6">
+        <h3 class="text-lg font-bold gradient-text mb-4">发布须知</h3>
+        <ul class="space-y-3 text-sm text-slate-300">
+          <li class="flex gap-3">
+            <svg class="w-5 h-5 text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+            <span>请确保资源内容合法、安全，不含违法违规信息</span>
+          </li>
+          <li class="flex gap-3">
+            <svg class="w-5 h-5 text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+            <span>资源链接需确保可正常访问，避免失效链接</span>
+          </li>
+          <li class="flex gap-3">
+            <svg class="w-5 h-5 text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+            <span>请填写准确的资源描述和标签，便于用户搜索</span>
+          </li>
+          <li class="flex gap-3">
+            <svg class="w-5 h-5 text-yellow-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 2.502-3.386V5.618c0-1.812-1.548-3.386-3.386-3.386h-1.786c0-.386-.238-.615-.576-.807"/>
+            </svg>
+            <span>精选资源需要管理员审核后才能在前台展示</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>
+
+<script>
+  const form = document.getElementById('resource-form');
+  const saveDraftBtn = document.getElementById('save-draft');
+
+  // 表单提交处理
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(form);
+    const data = {
+      title: formData.get('title'),
+      category: formData.get('category'),
+      platform: formData.get('platform'),
+      fileUrl: formData.get('fileUrl'),
+      extractCode: formData.get('extractCode'),
+      fileSize: formData.get('fileSize') + ' ' + formData.get('sizeUnit'),
+      description: formData.get('description'),
+      tags: formData.get('tags'),
+      author: formData.get('author'),
+      featured: formData.get('featured') === 'on',
+    };
+
+    console.log('发布资源:', data);
+
+    // TODO: 实际应该发送到后端API
+    alert('资源发布成功！\\n\\n' + JSON.stringify(data, null, 2));
+
+    // 可以重定向到资源列表或详情页
+    // window.location.href = '/admin/dashboard';
+  });
+
+  // 保存草稿
+  saveDraftBtn?.addEventListener('click', () => {
+    const formData = new FormData(form);
+    console.log('保存草稿:', Object.fromEntries(formData));
+    alert('草稿已保存！');
+  });
+</script>

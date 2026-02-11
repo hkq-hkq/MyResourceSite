@@ -1,43 +1,161 @@
-# Astro Starter Kit: Minimal
+# 自媒体干货库
 
-```sh
-npm create astro@latest -- --template minimal
+一个模仿 keqishe.com 设计风格的博客网站，使用 Astro + Tailwind CSS 构建。专注于分享互联网创业、副业项目、自媒体运营等实战经验。
+
+## 特性
+
+- 🎨 **现代化设计** - 精美的 UI 设计，响应式布局
+- 📱 **移动端优化** - 完美适配各种设备尺寸
+- 🔍 **全文搜索** - 支持 Ctrl+K 快速搜索文章
+- 🏷️ **分类标签** - 完善的分类和标签系统
+- 📄 **文章详情** - 优雅的文章阅读体验
+- ⚡ **性能优化** - 基于 Astro 的静态生成，极速加载
+- 🎯 **SEO 友好** - 良好的 SEO 结构
+
+## 技术栈
+
+- **框架**: [Astro 5](https://astro.build)
+- **样式**: [Tailwind CSS](https://tailwindcss.com)
+- **语言**: TypeScript
+
+## 快速开始
+
+### 安装依赖
+
+```bash
+npm install
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+### 启动开发服务器
 
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+```bash
+npm run dev
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+访问 [http://localhost:4321](http://localhost:4321) 查看网站。
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+### 构建生产版本
 
-Any static assets, like images, can be placed in the `public/` directory.
+```bash
+npm run build
+```
 
-## 🧞 Commands
+构建后的文件将输出到 `dist/` 目录。
 
-All commands are run from the root of the project, from a terminal:
+### 预览生产构建
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+```bash
+npm run preview
+```
 
-## 👀 Want to learn more?
+## 项目结构
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+```
+src/
+├── components/        # 可复用组件
+│   ├── Header.astro       # 头部导航
+│   ├── Footer.astro       # 页脚
+│   ├── Sidebar.astro      # 侧边栏
+│   └── SearchModal.astro  # 搜索弹窗
+├── layouts/          # 布局模板
+│   └── BaseLayout.astro  # 基础布局
+├── pages/            # 页面路由
+│   ├── index.astro        # 首页
+│   ├── article/           # 文章详情
+│   ├── tags/              # 标签页
+│   ├── projects.astro     # 分享项目页
+│   └── mindset.astro      # 创业思维页
+├── data/             # 数据文件
+│   └── articles.ts        # 文章数据
+└── styles/           # 样式文件
+    └── global.css         # 全局样式
+```
+
+## 添加文章
+
+编辑 `src/data/articles.ts` 文件，在 `articles` 数组中添加新的文章对象：
+
+```typescript
+{
+  id: 'article-id',
+  title: '文章标题',
+  excerpt: '文章摘要',
+  content: '<p>文章内容 HTML</p>',
+  category: '分享项目',
+  tags: ['新手副业', '小红书运营'],
+  date: '2025-01-01',
+  views: 1000,
+  featured: true  // 是否置顶推荐
+}
+```
+
+## 添加分类
+
+编辑 `src/data/articles.ts` 中的 `categories` 数组，并在导航中添加对应链接。
+
+## 自定义样式
+
+全局样式在 `src/styles/global.css` 中定义，使用 Tailwind CSS 的 `@layer` 和 `@apply` 指令。
+
+Tailwind 主题配置在 `tailwind.config.js` 中。
+
+## 部署
+
+### Vercel
+
+```bash
+npm install -g vercel
+vercel
+```
+
+### Netlify
+
+```bash
+npm run build
+# 将 dist 目录部署到 Netlify
+```
+
+### Node.js 服务器
+
+```bash
+npm run build
+node server.js
+```
+
+## 功能说明
+
+### 搜索功能
+
+- 按 `Ctrl + K` (Mac: `Cmd + K`) 打开搜索框
+- 或点击导航栏的搜索按钮
+- 支持搜索文章标题、摘要和标签
+
+### 分类筛选
+
+- 首页顶部可按分类筛选文章
+- 点击分类标签查看该分类下的所有文章
+
+### 标签导航
+
+- 点击文章或侧边栏的标签可查看相关文章
+- 标签页显示该标签下的所有文章
+
+## 注意事项
+
+**关于内容采集**: 本项目仅提供网站架构和设计模板。如需添加实际内容，请：
+
+1. 撰写原创文章
+2. 使用合法授权的内容
+3. 遵守相关版权法律法规
+
+本项目不提供任何内容采集功能，请勿用于抓取他人网站内容。
+
+## 许可证
+
+MIT
+
+## 致谢
+
+- 设计参考: [keqishe.com](https://keqishe.com)
+- 框架: [Astro](https://astro.build)
+- 样式: [Tailwind CSS](https://tailwindcss.com)

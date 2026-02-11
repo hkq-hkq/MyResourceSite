@@ -1,0 +1,122 @@
+---
+const featured = true;
+---
+
+<section class="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
+  <!-- 背景装饰 -->
+  <div class="absolute inset-0 overflow-hidden">
+    <!-- 渐变圆球 -->
+    <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse" style="animation-duration: 4s;"></div>
+    <div class="absolute bottom-1/4 right-1/4 w-80 h-80 bg-pink-500/20 rounded-full blur-3xl animate-pulse" style="animation-duration: 5s;"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl animate-pulse" style="animation-duration: 6s;"></div>
+
+    <!-- 网格线 -->
+    <div class="absolute inset-0 opacity-10" style="background-image: linear-gradient(rgba(168, 85, 247, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(168, 85, 247, 0.1) 1px, transparent 1px); background-size: 60px 60px;"></div>
+  </div>
+
+  <!-- 内容区域 -->
+  <div class="relative z-10 max-w-5xl mx-auto px-4 text-center">
+    <!-- 徽章 -->
+    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-8 fade-in" style="background: rgba(168, 85, 247, 0.15); backdrop-filter: blur(10px); border: 1px solid rgba(168, 85, 247, 0.3); animation-delay: 0ms;">
+      <div class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
+      <span class="text-sm font-medium">优质资源 · 持续更新</span>
+    </div>
+
+    <!-- 主标题 -->
+    <h1 class="text-5xl sm:text-6xl md:text-7xl font-bold mb-6 fade-in gradient-text leading-tight" style="animation-delay: 100ms;">
+        发现优质资源
+        <br />
+        <span class="text-white">激发创作灵感</span>
+    </h1>
+
+    <!-- 副标题 -->
+    <p class="text-lg sm:text-xl text-slate-400 mb-10 max-w-2xl mx-auto leading-relaxed fade-in" style="animation-delay: 200ms;">
+      汇集设计资源、开发工具、视频教程、电子书籍等优质内容
+      <br class="hidden sm:block" />
+      全部免费下载，助力你的创作与学习之旅
+    </p>
+
+    <!-- 搜索框 -->
+    <div class="max-w-2xl mx-auto mb-12 fade-in" style="animation-delay: 300ms;">
+      <div class="relative">
+        <input
+          type="search"
+          id="hero-search"
+          placeholder="搜索你需要的资源..."
+          class="input-modern w-full pl-14 pr-40 py-5 text-lg"
+        />
+        <svg class="absolute left-5 top-1/2 -translate-y-1/2 w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+        <button id="hero-search-btn" class="absolute right-3 top-1/2 -translate-y-1/2 btn-gradient px-6 py-3 text-sm font-bold">
+          搜索
+        </button>
+      </div>
+    </div>
+
+    <!-- 统计数据 -->
+    <div class="flex flex-wrap justify-center gap-8 fade-in" style="animation-delay: 400ms;">
+      <div class="text-center">
+        <div class="text-3xl sm:text-4xl font-bold gradient-text mb-1">500+</div>
+        <div class="text-sm text-slate-400">优质资源</div>
+      </div>
+      <div class="text-center">
+        <div class="text-3xl sm:text-4xl font-bold gradient-text mb-1">50K+</div>
+        <div class="text-sm text-slate-400">下载次数</div>
+      </div>
+      <div class="text-center">
+        <div class="text-3xl sm:text-4xl font-bold gradient-text mb-1">6</div>
+        <div class="text-sm text-slate-400">资源分类</div>
+      </div>
+    </div>
+
+    <!-- 分类快捷入口 -->
+    <div class="flex flex-wrap justify-center gap-3 mt-10 fade-in" style="animation-delay: 500ms;">
+      <span class="text-slate-400">热门分类：</span>
+      <a href="/category/design" class="tag text-sm">设计资源</a>
+      <a href="/category/dev-tools" class="tag text-sm">开发工具</a>
+      <a href="/category/tutorials" class="tag text-sm">视频教程</a>
+      <a href="/category/ebooks" class="tag text-sm">电子书</a>
+    </div>
+  </div>
+
+  <!-- 向下滚动提示 -->
+  <div class="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce">
+    <svg class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+    </svg>
+  </div>
+</section>
+
+<style>
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+
+<script>
+  const heroSearchInput = document.getElementById('hero-search');
+  const heroSearchBtn = document.getElementById('hero-search-btn');
+
+  function performHeroSearch() {
+    const query = heroSearchInput?.value.trim();
+    if (query) {
+      window.location.href = `/search?q=${encodeURIComponent(query)}`;
+    }
+  }
+
+  heroSearchBtn?.addEventListener('click', performHeroSearch);
+
+  heroSearchInput?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      performHeroSearch();
+    }
+  });
+</script>

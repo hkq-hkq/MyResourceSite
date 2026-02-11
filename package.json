@@ -6,9 +6,21 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "deploy": "bash deploy-simple.sh",
+    "deploy:full": "bash deploy.sh",
+    "deploy:git": "git add . && git commit -m \"🚀 自动部署: $(date +'%Y-%m-%d %H:%M:%S')\" && git push",
+    "deploy:config": "echo '请先配置 deploy.config.json 中的服务器信息'"
   },
   "dependencies": {
-    "astro": "^5.17.1"
+    "@astrojs/react": "^4.4.2",
+    "astro": "^5.17.1",
+    "framer-motion": "^12.34.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
+  },
+  "devDependencies": {
+    "@astrojs/tailwind": "^6.0.2",
+    "tailwindcss": "^3.4.19"
   }
 }

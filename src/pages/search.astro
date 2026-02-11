@@ -1,0 +1,239 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import ResourceCard from '../components/ResourceCard.astro';
+import { resources, categories, searchResources, getAllTags } from '../data/resources';
+
+// 获取搜索关键词
+const query = Astro.url.searchParams.get('q') || '';
+
+// 获取选中的分类和标签筛选
+const selectedCategory = Astro.url.searchParams.get('category');
+const selectedTag = Astro.url.searchParams.get('tag');
+
+// 执行搜索
+let searchResults = query
+  ? searchResources(query)
+  : resources;
+
+// 分类筛选
+if (selectedCategory) {
+  const category = categories.find(c => c.slug === selectedCategory);
+  if (category) {
+    searchResults = searchResults.filter(r => r.category === category.name);
+  }
+}
+
+// 标签筛选
+if (selectedTag) {
+  searchResults = searchResults.filter(r => r.tags.some(t => t.toLowerCase() === selectedTag.toLowerCase()));
+}
+
+// 获取所有热门标签
+const popularTags = getAllTags().slice(0, 20);
+
+// 排序参数
+const sortBy = Astro.url.searchParams.get('sort') || 'relevant';
+if (sortBy === 'latest') {
+  searchResults.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+} else if (sortBy === 'popular') {
+  searchResults.sort((a, b) => b.downloadCount - a.downloadCount);
+}
+---
+
+<Layout title={`搜索${query ? ': ' + query : ''} - 资源库`}>
+  <Navbar />
+
+  <main class="min-h-screen">
+    <!-- 搜索页头部 -->
+    <section class="relative py-16 overflow-hidden">
+      <div class="absolute inset-0">
+        <div class="absolute inset-0 opacity-20 bg-gradient-to-r from-purple-600/30 via-pink-600/30 to-cyan-600/30"></div>
+        <div class="absolute inset-0 backdrop-blur-3xl"></div>
+      </div>
+
+      <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 class="text-3xl sm:text-4xl font-bold gradient-text text-center mb-4">
+          {query ? `搜索 "${query}"` : '浏览全部资源'}
+        </h1>
+        <p class="text-center text-slate-400">
+          找到 <span class="text-white font-bold">{searchResults.length}</span> 个相关资源
+        </p>
+      </div>
+    </section>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6 relative z-20">
+      <div class="flex flex-col lg:flex-row gap-8">
+        <!-- 左侧：筛选栏 -->
+        <aside class="w-full lg:w-72 flex-shrink-0 space-y-6">
+          <!-- 分类筛选 -->
+          <div class="glass-card p-6">
+            <h3 class="font-bold mb-4 flex items-center gap-2">
+              <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+              </svg>
+              资源分类
+            </h3>
+            <div class="space-y-2">
+              <a
+                href={`/search?q=${encodeURIComponent(query)}${selectedTag ? '&tag=' + selectedTag : ''}`}
+                class:list={[
+                  "flex items-center justify-between px-4 py-2.5 rounded-xl transition-all duration-300 text-sm",
+                  !selectedCategory && "text-white font-bold"
+                ]}
+                class="text-slate-300"
+                style={!selectedCategory
+                  ? "background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);"
+                  : "background: rgba(255, 255, 255, 0.05);"
+                }
+              >
+                <span>全部分类</span>
+                <span class="text-xs opacity-70">{resources.length}</span>
+              </a>
+              {categories.map(cat => (
+                <a
+                  href={`/search?q=${encodeURIComponent(query)}&category=${cat.slug}${selectedTag ? '&tag=' + selectedTag : ''}`}
+                  class:list={[
+                    "flex items-center justify-between px-4 py-2.5 rounded-xl transition-all duration-300 text-sm",
+                    selectedCategory === cat.slug && "text-white font-bold"
+                  ]}
+                  class="text-slate-300"
+                  style={selectedCategory === cat.slug
+                    ? "background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);"
+                    : "background: rgba(255, 255, 255, 0.05);"
+                  }
+                >
+                  <span>{cat.name}</span>
+                  <span class="text-xs opacity-70">{cat.count}</span>
+                </a>
+              ))}
+            </div>
+          </div>
+
+          <!-- 热门标签 -->
+          <div class="glass-card p-6">
+            <h3 class="font-bold mb-4 flex items-center gap-2">
+              <svg class="w-5 h-5 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+              </svg>
+              热门标签
+            </h3>
+            <div class="flex flex-wrap gap-2">
+              {popularTags.map(tag => (
+                <a
+                  href={`/search?q=${encodeURIComponent(query)}&tag=${encodeURIComponent(tag)}${selectedCategory ? '&category=' + selectedCategory : ''}`}
+                  class:list={[
+                    "tag text-xs px-3 py-1.5 transition-all duration-300",
+                    selectedTag === tag && "text-white"
+                  ]}
+                  style={selectedTag === tag
+                    ? "background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);"
+                    : ""
+                  }
+                >
+                  #{tag}
+                </a>
+              ))}
+            </div>
+          </div>
+
+          <!-- 排序选项 -->
+          <div class="glass-card p-6">
+            <h3 class="font-bold mb-4 flex items-center gap-2">
+              <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h6m4 4v4m0-6V5a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2h4a2 2 0 002-2v-2m-6-4h9"/>
+              </svg>
+              排序方式
+            </h3>
+            <div class="space-y-2">
+              <a
+                href={`/search?q=${encodeURIComponent(query)}${selectedCategory ? '&category=' + selectedCategory : ''}${selectedTag ? '&tag=' + selectedTag : ''}&sort=relevant`}
+                class:list={[
+                  "flex items-center justify-between px-4 py-2.5 rounded-xl transition-all duration-300 text-sm",
+                  sortBy === 'relevant' && "text-white font-bold"
+                ]}
+                class="text-slate-300"
+                style={sortBy === 'relevant'
+                  ? "background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);"
+                  : "background: rgba(255, 255, 255, 0.05);"
+                }
+              >
+                <span>相关度</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7-7"/>
+                </svg>
+              </a>
+              <a
+                href={`/search?q=${encodeURIComponent(query)}${selectedCategory ? '&category=' + selectedCategory : ''}${selectedTag ? '&tag=' + selectedTag : ''}&sort=latest`}
+                class:list={[
+                  "flex items-center justify-between px-4 py-2.5 rounded-xl transition-all duration-300 text-sm",
+                  sortBy === 'latest' && "text-white font-bold"
+                ]}
+                class="text-slate-300"
+                style={sortBy === 'latest'
+                  ? "background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);"
+                  : "background: rgba(255, 255, 255, 0.05);"
+                }
+              >
+                <span>最新发布</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+              </a>
+              <a
+                href={`/search?q=${encodeURIComponent(query)}${selectedCategory ? '&category=' + selectedCategory : ''}${selectedTag ? '&tag=' + selectedTag : ''}&sort=popular`}
+                class:list={[
+                  "flex items-center justify-between px-4 py-2.5 rounded-xl transition-all duration-300 text-sm",
+                  sortBy === 'popular' && "text-white font-bold"
+                ]}
+                class="text-slate-300"
+                style={sortBy === 'popular'
+                  ? "background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);"
+                  : "background: rgba(255, 255, 255, 0.05);"
+                }
+              >
+                <span>最多下载</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                </svg>
+              </a>
+            </div>
+          </div>
+        </aside>
+
+        <!-- 右侧：搜索结果 -->
+        <div class="flex-1">
+          {searchResults.length > 0 ? (
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              {searchResults.map((resource, index) => (
+                <ResourceCard resource={resource} index={index} />
+              ))}
+            </div>
+          ) : (
+            <div class="glass-card p-12 text-center">
+              <div class="w-20 h-20 mx-auto mb-6 rounded-full flex items-center justify-center" style="background: rgba(168, 85, 247, 0.1);">
+                <svg class="w-10 h-10 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+              </div>
+              <h3 class="text-xl font-bold text-white mb-2">
+                {query ? `未找到与 "${query}" 相关的资源` : '暂无资源'}
+              </h3>
+              <p class="text-slate-400 mb-6">尝试使用其他关键词或浏览分类</p>
+              <a href="/" class="btn-gradient px-8 py-3 inline-flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7-5-5 5 5M5 21v-7a2 2 0 012-2h5a2 2 0 012 2v12a2 2 0 01-2 2H7a2 2 0 01-2-2v-7"/>
+                </svg>
+                返回首页
+              </a>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</Layout>

@@ -1,0 +1,49 @@
+---
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = '资源库 - 发现优质资源，激发创作灵感',
+  description = '汇集设计资源、开发工具、视频教程、电子书籍等优质内容，全部免费下载，助力你的创作与学习之旅。'
+} = Astro.props;
+
+import '../styles/global.css';
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content={description} />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+
+    <!-- 预加载字体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>
+
+<style is:global>
+  /* 添加淡入动画到页面 */
+  body > * {
+    animation: pageLoad 0.5s ease-out;
+  }
+
+  @keyframes pageLoad {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+</style>

@@ -1,17 +1,160 @@
 ---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Hero from '../components/Hero.astro';
+import Footer from '../components/Footer.astro';
+import ResourceCard from '../components/ResourceCard.astro';
+import { resources, categories, getFeaturedResources } from '../data/resources';
 
+// 获取筛选参数
+const selectedCategory = Astro.url.searchParams.get('category');
+const searchQuery = Astro.url.searchParams.get('search');
+
+// 筛选资源
+let filteredResources = resources;
+
+if (selectedCategory) {
+  const category = categories.find(c => c.slug === selectedCategory);
+  if (category) {
+    filteredResources = resources.filter(r => r.category === category.name);
+  }
+}
+
+if (searchQuery) {
+  const query = searchQuery.toLowerCase();
+  filteredResources = filteredResources.filter(r =>
+    r.title.toLowerCase().includes(query) ||
+    r.description.toLowerCase().includes(query) ||
+    r.tags.some(tag => tag.toLowerCase().includes(query))
+  );
+}
+
+// 精选资源在前
+const displayResources = [
+  ...filteredResources.filter(r => r.featured),
+  ...filteredResources.filter(r => !r.featured)
+];
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Layout title="首页 - 资源库">
+  <Navbar />
+
+  <main>
+    <!-- Hero 区域 -->
+    <Hero />
+
+    <!-- 分类筛选栏 -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div class="flex items-center gap-3 mb-8">
+        <h2 class="text-2xl font-bold gradient-text">资源分类</h2>
+        <div class="flex-1 h-px bg-gradient-to-r from-purple-500/50 to-transparent"></div>
+      </div>
+
+      <div class="flex gap-3 overflow-x-auto pb-4 scrollbar-hide">
+        <a
+          href="/"
+          class:list={[
+            "flex-shrink-0 px-6 py-3 rounded-2xl font-bold transition-all duration-300 whitespace-nowrap",
+            !selectedCategory && "text-white"
+          ]}
+          class="text-slate-300"
+          style={!selectedCategory
+            ? "background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%); box-shadow: 0 4px 20px rgba(168, 85, 247, 0.4);"
+            : "background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1);"
+          }
+        >
+          全部资源
+        </a>
+        {categories.map((cat) => (
+          <a
+            href={`/?category=${cat.slug}`}
+            class:list={[
+              "flex-shrink-0 px-6 py-3 rounded-2xl font-bold transition-all duration-300 whitespace-nowrap flex items-center gap-2",
+              selectedCategory === cat.slug && "text-white"
+            ]}
+            class="text-slate-300"
+            style={selectedCategory === cat.slug
+              ? "background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%); box-shadow: 0 4px 20px rgba(168, 85, 247, 0.4);"
+              : "background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1);"
+            }
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d={cat.icon} />
+            </svg>
+            {cat.name}
+            <span class="px-2 py-0.5 rounded-full text-xs" style={`background: ${cat.color};`}>({cat.count})</span>
+          </a>
+        ))}
+      </div>
+
+      <!-- 搜索结果提示 -->
+      {searchQuery && (
+        <div class="mt-6 p-4 rounded-2xl" style="background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.2);">
+          <p class="text-slate-300">
+            搜索 "<span class="text-white font-bold">{searchQuery}</span>" 的结果：共找到 <span class="text-white font-bold">{filteredResources.length}</span> 个资源
+          </p>
+        </div>
+      )}
+    </section>
+
+    <!-- 资源列表 -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+      <div class="flex items-center gap-3 mb-8">
+        <h2 class="text-2xl font-bold gradient-text">
+          {selectedCategory
+            ? categories.find(c => c.slug === selectedCategory)?.name || '全部资源'
+            : searchQuery
+            ? '搜索结果'
+            : '全部资源'}
+        </h2>
+        <div class="flex-1 h-px bg-gradient-to-r from-purple-500/50 to-transparent"></div>
+        <span class="text-slate-400 text-sm">共 {displayResources.length} 个资源</span>
+      </div>
+
+      {displayResources.length > 0 ? (
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {displayResources.map((resource, index) => (
+            <ResourceCard resource={resource} index={index} />
+          ))}
+        </div>
+      ) : (
+        <div class="text-center py-20">
+          <div class="w-24 h-24 mx-auto mb-6 rounded-full flex items-center justify-center" style="background: rgba(168, 85, 247, 0.1);">
+            <svg class="w-12 h-12 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold text-white mb-2">暂无相关资源</h3>
+          <p class="text-slate-400">尝试切换分类或搜索其他关键词</p>
+        </div>
+      )}
+    </section>
+
+    <!-- 加载更多按钮 -->
+    {displayResources.length > 0 && (
+      <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+        <div class="text-center">
+          <button class="btn-gradient px-12 py-4 text-lg font-bold rounded-2xl inline-flex items-center gap-2 group">
+            <span>加载更多</span>
+            <svg class="w-5 h-5 transition-transform duration-300 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </button>
+        </div>
+      </section>
+    )}
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+</style>

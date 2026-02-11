@@ -1,0 +1,127 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Navbar from '../../components/Navbar.astro';
+import Footer from '../../components/Footer.astro';
+import ResourceCard from '../../components/ResourceCard.astro';
+import { resources, categories } from '../../data/resources';
+
+// 生成所有可能的静态路径
+export function getStaticPaths() {
+  return categories.map((category) => ({
+    params: { slug: category.slug },
+  }));
+}
+
+// 获取分类slug
+const { slug } = Astro.params;
+
+// 查找对应分类
+const category = categories.find(c => c.slug === slug);
+
+// 如果分类不存在，返回404
+if (!category) {
+  return Astro.redirect('/404');
+}
+
+// 筛选该分类的资源
+const categoryResources = resources.filter(r => r.category === category!.name);
+
+// 获取排序参数
+const sortBy = Astro.url.searchParams.get('sort') || 'latest';
+
+// 排序资源
+let displayResources = [...categoryResources];
+if (sortBy === 'latest') {
+  displayResources.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+} else if (sortBy === 'popular') {
+  displayResources.sort((a, b) => b.downloadCount - a.downloadCount);
+}
+---
+
+<Layout title={`${category!.name} - 资源库`}>
+  <Navbar />
+
+  <main class="min-h-screen">
+    <!-- 分类头部 -->
+    <section class="relative py-20 overflow-hidden">
+      <div class="absolute inset-0">
+        <div class="absolute inset-0 opacity-30" style={`background: linear-gradient(135deg, ${category!.color});`}></div>
+        <div class="absolute inset-0 backdrop-blur-3xl"></div>
+      </div>
+
+      <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center gap-4 mb-6">
+          <div class="w-16 h-16 rounded-2xl flex items-center justify-center" style={`background: linear-gradient(135deg, ${category!.color}); box-shadow: 0 8px 32px rgba(168, 85, 247, 0.4);`}>
+            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d={category!.icon}/>
+            </svg>
+          </div>
+          <div>
+            <h1 class="text-4xl sm:text-5xl font-bold gradient-text">{category!.name}</h1>
+            <p class="text-slate-400 mt-2">共 {categoryResources.length} 个优质资源</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 筛选和排序栏 -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8 -mt-8 relative z-20">
+      <div class="glass-card p-4 flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-2">
+          <span class="text-slate-400 text-sm">排序：</span>
+          <a
+            href={`/category/${slug}?sort=latest`}
+            class:list={[
+              "px-4 py-2 rounded-xl font-medium text-sm transition-all duration-300",
+              sortBy === 'latest' && "text-white"
+            ]}
+            class="text-slate-400"
+            style={sortBy === 'latest'
+              ? "background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);"
+              : "background: rgba(255, 255, 255, 0.05);"
+            }
+          >
+            最新发布
+          </a>
+          <a
+            href={`/category/${slug}?sort=popular`}
+            class:list={[
+              "px-4 py-2 rounded-xl font-medium text-sm transition-all duration-300",
+              sortBy === 'popular' && "text-white"
+            ]}
+            class="text-slate-400"
+            style={sortBy === 'popular'
+              ? "background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);"
+              : "background: rgba(255, 255, 255, 0.05);"
+            }
+          >
+            最多下载
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 资源列表 -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+      {displayResources.length > 0 ? (
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {displayResources.map((resource, index) => (
+            <ResourceCard resource={resource} index={index} />
+          ))}
+        </div>
+      ) : (
+        <div class="text-center py-20">
+          <div class="w-24 h-24 mx-auto mb-6 rounded-full flex items-center justify-center" style="background: rgba(168, 85, 247, 0.1);">
+            <svg class="w-12 h-12 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold text-white mb-2">该分类暂无资源</h3>
+          <p class="text-slate-400">我们会尽快添加相关资源</p>
+        </div>
+      )}
+    </section>
+  </main>
+
+  <Footer />
+</Layout>

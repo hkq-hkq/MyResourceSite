@@ -1,0 +1,87 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/tsconfig",
+  "comment": "宝塔面板自动部署配置文件",
+
+  "deployment": {
+    "type": "baota",
+    "description": "宝塔面板部署配置",
+
+    "server": {
+      "host": "your-server-ip",
+      "port": 22,
+      "username": "root",
+      "password": "",
+      "keyPath": "~/.ssh/id_rsa",
+      "webPath": "/www/wwwroot/your-site.com"
+    },
+
+    "baota": {
+      "panelUrl": "http://your-server:8888",
+      "panelUser": "your-username",
+      "panelPass": "your-password",
+      "siteName": "your-site.com",
+      "phpVersion": "8.0",
+      "ssl": true
+    },
+
+    "build": {
+      "command": "npm run build",
+      "outputDir": "dist",
+      "cleanBeforeDeploy": true
+    },
+
+    "upload": {
+      "method": "rsync",
+      "exclude": [
+        ".git",
+        "node_modules",
+        ".env",
+        ".DS_Store"
+      ],
+      "deleteRemote": true,
+      "permissions": "755",
+      "owner": "www:www"
+    },
+
+    "git": {
+      "autoCommit": true,
+      "autoPush": true,
+      "commitMessage": "🚀 自动部署: {timestamp}",
+      "branch": "main"
+    },
+
+    "webhook": {
+      "enabled": false,
+      "url": "http://your-server:8888/webhook",
+      "secret": "your-webhook-secret"
+    }
+  },
+
+  "scripts": {
+    "deploy": {
+      "description": "一键部署",
+      "command": "bash deploy-simple.sh"
+    },
+    "deploy:full": {
+      "description": "完整部署（Git + 构建 + 上传）",
+      "command": "bash deploy.sh"
+    },
+    "deploy:git": {
+      "description": "仅提交到Git",
+      "command": "git add . && git commit -m '🚀 自动部署: $(date)' && git push"
+    },
+    "deploy:build": {
+      "description": "仅本地构建",
+      "command": "npm run build"
+    }
+  },
+
+  "environments": {
+    "development": {
+      "url": "http://localhost:4325"
+    },
+    "production": {
+      "url": "https://your-site.com"
+    }
+  }
+}

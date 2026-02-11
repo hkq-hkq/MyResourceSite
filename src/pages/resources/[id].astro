@@ -1,0 +1,287 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Navbar from '../../components/Navbar.astro';
+import Footer from '../../components/Footer.astro';
+import { getResourceById, resources } from '../../data/resources';
+
+// 生成所有可能的静态路径
+export function getStaticPaths() {
+  return resources.map((resource) => ({
+    params: { id: resource.id },
+  }));
+}
+
+// 获取资源ID
+const { id } = Astro.params;
+const resource = getResourceById(id);
+
+// 如果资源不存在，返回404
+if (!resource) {
+  return Astro.redirect('/404');
+}
+
+// 获取相关推荐（同分类的其他资源）
+const relatedResources = resources
+  .filter(r => r.category === resource!.category && r.id !== id)
+  .slice(0, 4);
+
+// 格式化下载量
+function formatDownloads(count: number): string {
+  if (count >= 10000) {
+    return (count / 10000).toFixed(1) + 'w+';
+  } else if (count >= 1000) {
+    return (count / 1000).toFixed(1) + 'k+';
+  }
+  return count + '+';
+}
+
+// 获取分类颜色
+function getCategoryColor(category: string): string {
+  const colors: Record<string, string> = {
+    '设计资源': 'from-pink-500 to-rose-500',
+    '开发工具': 'from-purple-500 to-indigo-500',
+    '视频教程': 'from-cyan-500 to-blue-500',
+    '电子书': 'from-green-500 to-emerald-500',
+    '软件素材': 'from-orange-500 to-amber-500',
+    '模板源码': 'from-red-500 to-pink-500',
+  };
+  return colors[category] || 'from-purple-500 to-pink-500';
+}
+---
+
+<Layout title={`${resource!.title} - 资源库`}>
+  <Navbar />
+
+  <main class="min-h-screen">
+    <!-- 顶部封面区 -->
+    <section class="relative h-80 overflow-hidden">
+      <div class="absolute inset-0">
+        <div class="absolute inset-0 bg-gradient-to-br from-purple-600/30 via-pink-600/30 to-cyan-600/30"></div>
+        <div class="absolute inset-0 backdrop-blur-3xl"></div>
+        <div class="absolute inset-0" style="background: linear-gradient(180deg, rgba(15, 23, 42, 0.8) 0%, rgba(15, 23, 42, 1) 100%);"></div>
+      </div>
+
+      <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-end pb-10">
+        <div class="flex-1">
+          <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-4" style="background: rgba(168, 85, 247, 0.2); backdrop-filter: blur(10px); border: 1px solid rgba(168, 85, 247, 0.3);">
+            <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+            <span class="text-sm font-medium">{resource!.platform}</span>
+          </div>
+          <h1 class="text-4xl sm:text-5xl font-bold gradient-text leading-tight mb-4">
+            {resource!.title}
+          </h1>
+          <div class="flex flex-wrap items-center gap-4 text-sm text-slate-400">
+            <span class="flex items-center gap-1.5">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+              </svg>
+              {resource!.createdAt}
+            </span>
+            <span class="flex items-center gap-1.5">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+              </svg>
+              {formatDownloads(resource!.downloadCount)} 下载
+            </span>
+            <span class="flex items-center gap-1.5">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l4-4m4 4V9a2 2 0 00-2-2H6a2 2 0 00-2 2v11"/>
+              </svg>
+              {resource!.fileSize}
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 内容区域 -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6 relative z-20 pb-20">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- 主要内容 -->
+        <div class="lg:col-span-2 space-y-8">
+          <!-- 资源信息卡片 -->
+          <div class="glass-card p-8">
+            <h2 class="text-2xl font-bold mb-6 gradient-text">资源介绍</h2>
+            <p class="text-slate-300 leading-relaxed text-lg mb-6">
+              {resource!.description}
+            </p>
+
+            <!-- 标签 -->
+            <div class="mb-8">
+              <h3 class="text-sm font-bold text-slate-400 mb-4 uppercase tracking-wider">标签</h3>
+              <div class="flex flex-wrap gap-3">
+                {resource!.tags.map(tag => (
+                  <span class="tag">
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <!-- 下载按钮区 -->
+            <div class="flex flex-col sm:flex-row gap-4">
+              <a
+                href={resource!.fileUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="flex-1 btn-gradient py-5 text-xl font-bold rounded-2xl flex items-center justify-center gap-3 group"
+              >
+                <svg class="w-6 h-6 group-hover:animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l4-4m4 4V9a2 2 0 00-2-2H6a2 2 0 00-2 2v11"/>
+                </svg>
+                立即下载
+              </a>
+              <button
+                id="copy-link-btn"
+                class="px-8 py-5 rounded-2xl font-bold transition-all duration-300 flex items-center gap-2"
+                style="background: rgba(168, 85, 247, 0.15); backdrop-filter: blur(10px); border: 1px solid rgba(168, 85, 247, 0.3);"
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                </svg>
+                复制链接
+              </button>
+            </div>
+
+            <!-- 提示信息 -->
+            <div class="mt-6 p-4 rounded-xl" style="background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.2);">
+              <div class="flex gap-3">
+                <svg class="w-5 h-5 text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <p class="text-sm text-green-300">
+                  资源已验证安全，请放心下载。如遇到问题请联系管理员。
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 使用说明 -->
+          <div class="glass-card p-8">
+            <h2 class="text-2xl font-bold mb-6 gradient-text">使用说明</h2>
+            <div class="space-y-4">
+              <div class="flex gap-4">
+                <div class="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold" style="background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);">
+                  1
+                </div>
+                <p class="text-slate-300 pt-1">点击下载按钮跳转到网盘页面</p>
+              </div>
+              <div class="flex gap-4">
+                <div class="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold" style="background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);">
+                  2
+                </div>
+                <p class="text-slate-300 pt-1">根据提示输入提取码（如有）</p>
+              </div>
+              <div class="flex gap-4">
+                <div class="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold" style="background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);">
+                  3
+                </div>
+                <p class="text-slate-300 pt-1">下载并解压文件即可使用</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 侧边栏 -->
+        <div class="space-y-6">
+          <!-- 发布者信息 -->
+          <div class="glass-card p-6">
+            <h3 class="text-lg font-bold mb-4 text-white">发布者</h3>
+            <div class="flex items-center gap-4">
+              <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-xl font-bold">
+                {resource!.author.name.charAt(0)}
+              </div>
+              <div>
+                <div class="font-bold text-lg">{resource!.author.name}</div>
+                <div class="text-sm text-slate-400">资源贡献者</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 资源信息 -->
+          <div class="glass-card p-6">
+            <h3 class="text-lg font-bold mb-4 text-white">资源信息</h3>
+            <div class="space-y-4">
+              <div class="flex justify-between items-center">
+                <span class="text-slate-400">文件大小</span>
+                <span class="font-bold">{resource!.fileSize}</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-slate-400">网盘平台</span>
+                <span class="font-bold">{resource!.platform}</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-slate-400">下载次数</span>
+                <span class="font-bold">{formatDownloads(resource!.downloadCount)}</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-slate-400">发布日期</span>
+                <span class="font-bold">{resource!.createdAt}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 分类标签 -->
+          <div class="glass-card p-6">
+            <h3 class="text-lg font-bold mb-4 text-white">所属分类</h3>
+            <a
+              href={`/category/${resource!.category.toLowerCase().replace(/\s+/g, '-')}`}
+              class="flex items-center gap-3 p-3 rounded-xl transition-all duration-300 hover:scale-105"
+              style="background: rgba(168, 85, 247, 0.15); border: 1px solid rgba(168, 85, 247, 0.2);"
+            >
+              <div class="w-10 h-10 rounded-lg flex items-center justify-center" style={`background: linear-gradient(135deg, ${getCategoryColor(resource!.category)});`}>
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                </svg>
+              </div>
+              <span class="font-bold">{resource!.category}</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 相关推荐 -->
+      {relatedResources.length > 0 && (
+        <section class="mt-16">
+          <div class="flex items-center gap-3 mb-8">
+            <h2 class="text-2xl font-bold gradient-text">相关推荐</h2>
+            <div class="flex-1 h-px bg-gradient-to-r from-purple-500/50 to-transparent"></div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {relatedResources.map((r, index) => (
+              <ResourceCard resource={r} index={index} />
+            ))}
+          </div>
+        </section>
+      )}
+    </section>
+  </main>
+
+  <Footer />
+</Layout>
+
+<script>
+  // 复制链接功能
+  const copyBtn = document.getElementById('copy-link-btn');
+  if (copyBtn) {
+    copyBtn.addEventListener('click', async () => {
+      const url = window.location.href;
+      try {
+        await navigator.clipboard.writeText(url);
+        const originalText = copyBtn.innerHTML;
+        copyBtn.innerHTML = `
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+          </svg>
+          <span>已复制</span>
+        `;
+        setTimeout(() => {
+          copyBtn.innerHTML = originalText;
+        }, 2000);
+      } catch (err) {
+        console.error('复制失败:', err);
+      }
+    });
+  }
+</script>
